@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Container Actions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      border: 2px solid #555;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 15px auto;
+      width: 300px;
+      background-color: white;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Container Actions Demo</h1>
+
+  <!-- 1. Toggle Show/Hide Container -->
+  <div class="container" id="container1">
+    <p id="toggleText1">This container’s content can be shown or hidden using the button below.</p>
+    <button onclick="toggleContainer1()">Hide Content</button>
+  </div>
+
+  <!-- 2. Show Container -->
+  <div class="container" id="container2" style="display: none;">
+    <p>This container was hidden initially and will appear when shown.</p>
+    <button onclick="showContainer()">Show</button>
+  </div>
+
+  <!-- 3. Change Image -->
+  <div class="container" id="container3">
+    <img id="demoImage" src="download1.jpg" alt="Example Image">
+    <button onclick="changeImage()">Change Image</button>
+  </div>
+
+  <!-- 4. Change Background Colour -->
+  <div class="container" id="container4">
+    <p>Click the button to change this container’s background color.</p>
+    <button onclick="changeColor()">Change Color</button>
+  </div>
+
+  <!-- 5. Change HTML Content -->
+  <div class="container" id="container5">
+    <p id="contentText">Original content of this container.</p>
+    <button onclick="changeContent()">Change Content</button>
+  </div>
+
+  <!-- 6. Display Sum of 5 + 6 -->
+  <div class="container" id="container6">
+    <p id="sumResult">Click the button to show the sum of 5 + 6.</p>
+    <button onclick="showSum()">Show Sum</button>
+  </div>
+  <div class="Subhash">
+    <p id = "Controlifelse"> </p> 
+    <button class="btn" onclick="display4()"> Control </button>       
+    </div>
+
+  <script src="week2.js"></script>
+</body>
+</html>
