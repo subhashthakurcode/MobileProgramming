@@ -2,10 +2,15 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-const suggestions = [
+const suggestions: Suggestion[] = [
   { id: "1", text: "You have a 2-hour gap after lunch. Good time for deep work." },
   { id: "2", text: "Drink some water! You haven't logged any today." },
 ];
+
+interface Suggestion {
+  id: string;
+  text: string;
+}
 
 export default function AISuggestions() {
   return (
@@ -15,7 +20,7 @@ export default function AISuggestions() {
       {suggestions.map((s) => (
         <TouchableOpacity
           key={s.id}
-          onPress={() => console.log("Clicked insight:", s.text)}
+          onPress={() => {}}
         >
           <View style={styles.suggestionCard}>
             <Text style={styles.suggestionText}>{s.text}</Text>

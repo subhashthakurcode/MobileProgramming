@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { SafeAreaView, ScrollView, StatusBar, Platform, StyleSheet } from "react-native";
 
 import Header from "./components/Header";
@@ -6,19 +6,38 @@ import CalendarWidget from "./components/CalendarWidget";
 import AISuggestions from "./components/AISuggestions";
 import TaskList from "./components/TaskList";
 import LoginScreen from "./components/LoginScreen";
+import AddTaskScreen from "./components/AddTaskScreen";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showAddTaskScreen, setShowAddTaskScreen] = useState(false);
+
+  const handleLogin = useCallback(() => {
+    setIsLoggedIn(true);
+  }, []);
+
+  const handleAddTaskPress = useCallback(() => {
+    setShowAddTaskScreen(true);
+  }, []);
+
+  const handleTaskAdded = useCallback(() => {
+    setShowAddTaskScreen(false);
+    // Optionally, refresh task list here if needed
+  }, []);
 
   if (!isLoggedIn) {
-    return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
+    return <LoginScreen onLogin={handleLogin} />;
+  }
+
+  if (showAddTaskScreen) {
+    return <AddTaskScreen onTaskAdded={handleTaskAdded} />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Header onProfilePress={() => console.log("Profile clicked")} />
+        <Header onProfilePress={() => {}} onAddTaskPress={handleAddTaskPress} />
         <CalendarWidget />
         <AISuggestions />
         <TaskList />

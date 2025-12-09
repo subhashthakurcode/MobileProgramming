@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { app } from '../firebaseConfig'; // Import the Firebase app instance
 
 type LoginScreenProps = {
   onLogin: () => void;
@@ -8,6 +10,25 @@ type LoginScreenProps = {
 const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const auth = getAuth(app);
+
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      console.error('Error: Please enter both email and password');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      onLogin(); // Call onLogin on successful authentication
+    } catch (error: any) {
+      console.error('Login Error:', error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -20,6 +41,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
+          editable={!isLoading}
         />
         <TextInput
           style={styles.input}
@@ -27,8 +49,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          editable={!isLoading}
         />
-        <Button title="Login" onPress={() => onLogin()} />
+        <Button 
+          title={isLoading ? "Logging in..." : "Login"} 
+          onPress={handleLogin} 
+          disabled={isLoading}
+        />
       </View>
     </SafeAreaView>
   );

@@ -14,10 +14,7 @@ export default function CalendarWidget() {
         {days.map((day, index) => (
           <TouchableOpacity
             key={index}
-            onPress={() => {
-              setSelectedIndex(index);
-              console.log("Clicked day:", day);
-            }}
+            onPress={() => setSelectedIndex(index)}
           >
             <View
               style={[
@@ -39,7 +36,7 @@ export default function CalendarWidget() {
                   selectedIndex === index && styles.activeDayText,
                 ]}
               >
-                {24 + (index - selectedIndex)}
+                {new Date().getDate() + (index - selectedIndex)}
               </Text>
             </View>
           </TouchableOpacity>
