@@ -2,20 +2,30 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-export default function Header({ onProfilePress }: any) {
+interface HeaderProps {
+  onProfilePress: () => void;
+  onAddTaskPress: () => void;
+}
+
+export default function Header({ onProfilePress, onAddTaskPress }: HeaderProps) {
   return (
     <View style={styles.headerContainer}>
       <View>
         <Text style={styles.greetingText}>Good Morning,</Text>
 
-        <TouchableOpacity onPress={() => console.log("Name clicked")}>
+        <TouchableOpacity onPress={() => {}}>
           <Text style={styles.userNameText}>Alex</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.profileIcon} onPress={onProfilePress}>
-        <Text style={styles.profileInitials}>AL</Text>
-      </TouchableOpacity>
+      <View style={styles.rightIconsContainer}>
+        <TouchableOpacity style={styles.addTaskIcon} onPress={onAddTaskPress}>
+          <Text style={styles.addTaskText}>+</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.profileIcon} onPress={onProfilePress}>
+          <Text style={styles.profileInitials}>AL</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -27,6 +37,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 24,
   },
+  rightIconsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   greetingText: {
     fontSize: 16,
     color: "#64748B",
@@ -36,7 +50,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#1E293B",
   },
-
+  addTaskIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#6B7280",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  addTaskText: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
   profileIcon: {
     width: 48,
     height: 48,

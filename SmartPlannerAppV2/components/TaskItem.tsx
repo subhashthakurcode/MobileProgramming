@@ -2,13 +2,22 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-export default function TaskItem({ task, onToggle }: any) {
+interface Task {
+  id: string;
+  title: string;
+  time: string;
+  completed: boolean;
+}
+
+interface TaskItemProps {
+  task: Task;
+  onToggle: (id: string) => void;
+}
+
+export default React.memo(function TaskItem({ task, onToggle }: TaskItemProps) {
   return (
     <TouchableOpacity
-      onPress={() => {
-        console.log("Clicked task:", task.title);
-        onToggle(task.id);
-      }}
+      onPress={() => onToggle(task.id)}
       style={styles.taskItem}
     >
       <View
@@ -25,7 +34,7 @@ export default function TaskItem({ task, onToggle }: any) {
       </View>
     </TouchableOpacity>
   );
-}
+});
 
 const styles = StyleSheet.create({
   taskItem: {
