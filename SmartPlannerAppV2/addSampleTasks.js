@@ -1,10 +1,11 @@
 const { initializeApp } = require('firebase/app');
-const { getFirestore, collection, addDoc, getDocs } = require('firebase/firestore');
+const { getDatabase, ref, get, push } = require('firebase/database');
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBF2U2j-FgWpyqnJl6EkaTLjGhrSEbNiJE",
   authDomain: "mobile-programming-9ade2.firebaseapp.com",
+  databaseURL: "https://mobile-programming-9ade2-default-rtdb.firebaseio.com",
   projectId: "mobile-programming-9ade2",
   storageBucket: "mobile-programming-9ade2.firebasestorage.app",
   messagingSenderId: "980544393358",
@@ -14,7 +15,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const database = getDatabase(app);
 
 const sampleTasks = [
   { title: "Morning Standup", time: "10:00 AM", completed: false },
@@ -26,24 +27,20 @@ const sampleTasks = [
 async function addSampleTasks() {
   try {
     // Check if tasks already exist to avoid duplicates
-    const existingSnapshot = await getDocs(collection(db, "tasks"));
-    if (!existingSnapshot.empty) {
+    const tasksRef = ref(database, 'tasks');
+    const snapshot = await get(tasksRef);
+    if (snapshot.exists()) {
       console.log("Tasks already exist. Skipping sample data creation.");
       return;
     }
 
     for (const task of sampleTasks) {
-      await addDoc(collection(db, "tasks"), task);
+      await push(tasksRef, task);
       console.log(`Added task: ${task.title}`);
     }
     console.log("All sample tasks added successfully!");
   } catch (error) {
     console.error("Error adding tasks:", error);
-    if (error.code === 'permission-denied') {
-      console.error("Firestore permissions denied. Check your Firestore security rules.");
-    } else if (error.code === 'unavailable') {
-      console.error("Firestore is unavailable. Check your network connection.");
-    }
   }
 }
 

@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import TaskItem from "./TaskItem";
-import { db } from "../firebaseConfig";
-import { collection, onSnapshot, doc, updateDoc, query, where } from "firebase/firestore";
+import { database } from "../firebaseConfig";
+import { ref, onValue, update } from "firebase/database";
 
 interface Task {
   id: string;
@@ -26,76 +26,39 @@ export default React.memo(function TaskList() {
   useEffect(() => {
     console.log("TaskList: useEffect triggered");
 
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-    const day = String(today.getDate()).padStart(2, '0');
-    const todayDateString = `${year}-${month}-${day}`;
+    const tasksRef = ref(database, 'tasks');
 
-    // Set loading timeout to prevent infinite loading
-    const loadingTimeout = setTimeout(() => {
-      if (loading) {
-        console.log("TaskList: Loading timeout reached");
-        setLoading(false);
-        setError("Connection timeout. Please check your network.");
+    const unsubscribe = onValue(tasksRef, (snapshot) => {
+      const tasksData = snapshot.val();
+      if (tasksData) {
+        const tasksList = Object.keys(tasksData).map(key => ({
+          id: key,
+          ...tasksData[key]
+        }));
+        setTasks(tasksList);
+      } else {
+        setTasks([]);
       }
-    }, 10000); // 10 second timeout
-
-    console.log("TaskList: Subscribing to Firestore 'tasks' collection, filtering for today: ", todayDateString);
-    // Subscribe to tasks collection with debouncing
-    let timeoutId: NodeJS.Timeout;
-    
-    const tasksQuery = query(collection(db, "tasks"), where("date", "==", todayDateString));
-
-    const unsubscribe = onSnapshot(
-      tasksQuery,
-      (snapshot) => {
-        console.log("TaskList: onSnapshot success callback triggered");
-        // Debounce updates to prevent excessive re-renders
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          console.log("TaskList: Processing snapshot data");
-          const tasksData = snapshot.docs.map(doc => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              title: data.title || 'Untitled Task',
-              time: data.time || '12:00 PM',
-              completed: data.completed || false,
-              description: data.description,
-              date: data.date,
-              priority: data.priority
-            };
-          });
-          console.log("TaskList: Setting tasks, loading to false, error to null");
-          setTasks(tasksData);
-          setLoading(false);
-          setError(null);
-        }, 100); // 100ms debounce
-      },
-      (error) => {
-        console.error("TaskList: onSnapshot error:", error);
-        // Remove console.error in production to reduce noise
-        setError("Failed to load tasks. Please check your connection.");
-        setLoading(false);
-      }
-    );
+      setLoading(false);
+    }, (error) => {
+      console.error("TaskList: onValue error:", error);
+      setError("Failed to load tasks. Please check your connection.");
+      setLoading(false);
+    });
 
     // Cleanup subscription on unmount
     return () => {
-      console.log("TaskList: Unsubscribing from Firestore");
+      console.log("TaskList: Unsubscribing from Realtime Database");
       unsubscribe();
-      clearTimeout(timeoutId);
-      clearTimeout(loadingTimeout);
     };
   }, []);
 
   const toggleTask = async (id: string) => {
     try {
-      const taskDoc = doc(db, "tasks", id);
+      const taskRef = ref(database, `tasks/${id}`);
       const task = tasks.find(t => t.id === id);
       if (task) {
-        await updateDoc(taskDoc, {
+        await update(taskRef, {
           completed: !task.completed
         });
       }

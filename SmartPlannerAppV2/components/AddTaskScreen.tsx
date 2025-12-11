@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, Platform, TouchableOpacity } from 'react-native';
-import { collection, addDoc, getFirestore } from 'firebase/firestore';
-import { app } from '../firebaseConfig'; // Import the Firebase app instance
+import { database } from '../firebaseConfig';
+import { ref, push } from 'firebase/database';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 type AddTaskScreenProps = {
@@ -16,8 +16,6 @@ const AddTaskScreen: React.FC<AddTaskScreenProps> = ({ onTaskAdded }) => {
   const [priority, setPriority] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const db = getFirestore(app);
-
   const handleAddTask = async () => {
     if (!title.trim()) {
       Alert.alert('Error', 'Please enter task title');
@@ -28,17 +26,19 @@ const AddTaskScreen: React.FC<AddTaskScreenProps> = ({ onTaskAdded }) => {
 
     setIsLoading(true);
     try {
-      await addDoc(collection(db, 'tasks'), {
+      const tasksRef = ref(database, 'tasks');
+      await push(tasksRef, {
         title,
         description,
         date: formattedDate, // Use the formatted date
         priority,
         createdAt: new Date().toISOString(),
+        completed: false
       });
       Alert.alert('Success', 'Task added successfully!');
       setTitle('');
       setDescription('');
-      setDate('');
+      setDate(new Date());
       setPriority('');
       onTaskAdded(); // Notify parent component that a task was added
     } catch (error: any) {

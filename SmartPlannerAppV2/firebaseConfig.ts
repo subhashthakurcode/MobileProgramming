@@ -2,11 +2,13 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from 'firebase/analytics';
+import { getDatabase } from 'firebase/database';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBF2U2j-FgWpyqnJl6EkaTLjGhrSEbNiJE",
   authDomain: "mobile-programming-9ade2.firebaseapp.com",
+  databaseURL: "https://mobile-programming-9ade2-default-rtdb.firebaseio.com",
   projectId: "mobile-programming-9ade2",
   storageBucket: "mobile-programming-9ade2.firebasestorage.app",
   messagingSenderId: "980544393358",
@@ -17,6 +19,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const database = getDatabase(app);
 
 // Initialize analytics with error handling
 let analytics;
@@ -27,4 +30,4 @@ try {
   analytics = null;
 }
 
-export { db, analytics };
+export { db, database, analytics };
